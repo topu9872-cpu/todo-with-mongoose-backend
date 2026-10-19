@@ -3,22 +3,30 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "nodemonConfig": {
+    "exec": "ts-node",
+    "watch": [
+      "."
+    ],
+    "ext": "ts,json"
   },
-  "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "dotenv": "^18.0.6",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.8",
     "express": "^5.2.1",
     "mongodb": "^7.7.0",
-    "mongoose": "^9.11.1",
-    "tsx": "^4.23.15",
-    "typescript": "^7.0.2"
+    "mongoose": "^9.11.1"
   },
   "devDependencies": {
-    "@types/node": "^26.6.4"
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.6.4",
+    "nodemon": "^3.1.14",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3"
   }
 }
