@@ -46,20 +46,74 @@ app.use(
 const startServer = async (): Promise<void> => {
   await connectDatabase();
 
+  // app.get("/tasks", async (req: Request, res: Response) => {
+  //   try {
+  //     const tasks = await Task.find();
+
+  //     res.status(200).json({
+  //       success: true,
+  //       tasks,
+  //     });
+  //   } catch (error) {
+  //     res.status(500).json({
+  //       success: false,
+  //       message: error instanceof Error ? error.message : "Unknown error",
+  //     });
+  //   }
+  // });
+
   app.get("/tasks", async (req: Request, res: Response) => {
     try {
-      const tasks = await Task.find();
+      const page = Number(req.query.page);
+      const limit = Number(req.query.limit);
+      const search = String(req.query.search ?? "").trim();
+
+      const filter = search
+        ? {
+            title: {
+              $regex: search,
+              $options: "i",
+            },
+          }
+        : {};
+
+      const [tasks, total] = await Promise.all([
+        Task.find(filter)
+          .sort({ createdAt: -1 })
+          .skip((page - 1) * limit)
+          .limit(limit),
+        Task.countDocuments(filter),
+      ]);
+
+      const totalPages = Math.ceil(total / limit);
 
       res.status(200).json({
         success: true,
-        count: tasks.length,
         tasks,
+        pagination: {
+          currentPage: page,
+          limit,
+          total,
+          totalPages,
+        },
       });
     } catch (error) {
+      console.error(error);
+
       res.status(500).json({
         success: false,
-        message: error instanceof Error ? error.message : "Unknown error",
+        message: "Failed to fetch tasks",
       });
+    }
+  });
+
+  app.get("/tasks/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const result = await Task.findById(id);
+      res.json(result);
+    } catch (error) {
+      console.error(error);
     }
   });
 
