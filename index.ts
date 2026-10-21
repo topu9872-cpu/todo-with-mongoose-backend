@@ -117,6 +117,20 @@ const startServer = async (): Promise<void> => {
     }
   });
 
+  app.post("/tasks", async (req: Request, res: Response) => {
+    try {
+      const query = req.body;
+      const result = await Task.create(query);
+      res.json({
+        success: true,
+        result,
+        createdAt: new Date(),
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  });
+
   app.get("/", (_req: Request, res: Response): void => {
     res.status(200).json({
       success: true,

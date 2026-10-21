@@ -7,7 +7,7 @@ const taskSchema = new mongoose.Schema(
       required: [true, "title is requered"],
       trim: true,
     },
-    discription: {
+    description: {
       type: String,
       trim: true,
     },
@@ -24,7 +24,7 @@ const taskSchema = new mongoose.Schema(
     dueDate: {
       type: Date,
     },
-    process: {
+    progress: {
       type: Number,
       min: 0,
       max: 100,
