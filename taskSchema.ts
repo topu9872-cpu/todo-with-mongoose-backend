@@ -34,6 +34,10 @@ const taskSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
+    userId:{
+      type:String,
+      required:false
+    }
   },
 
   {
