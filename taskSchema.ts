@@ -9,7 +9,6 @@ const taskSchema = new mongoose.Schema(
     },
     description: {
       type: String,
-      trim: true,
     },
     status: {
       type: String,
@@ -34,10 +33,10 @@ const taskSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
-    userId:{
-      type:String,
-      required:false
-    }
+    userId: {
+      type: String,
+      required: false,
+    },
   },
 
   {

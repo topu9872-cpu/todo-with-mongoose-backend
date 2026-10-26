@@ -6,11 +6,20 @@ export const getTasks = async (req: Request, res: Response) => {
     const page = Math.max(1, Number(req.query.page) || 1);
     const limit = Math.min(50, Math.max(1, Number(req.query.limit) || 12));
     const search = String(req.query.search ?? "").trim();
-    const userId = String(req.query.userId);
-    const filter = {
-      ...(search && { title: { $regex: search, $options: "i" } }),
-      ...(userId && { userId: userId }),
-    };
+    const userId = String(req.query.userId ?? "").trim();
+
+    const filter: Record<string, any> = {};
+
+    if (search) {
+      filter.title = {
+        $regex: search,
+        $options: "i",
+      };
+    }
+
+    if (userId && userId !== "undefined" && userId !== "null") {
+      filter.userId = userId;
+    }
 
     const tasks = await Task.find(filter)
       .sort({ createdAt: -1 })

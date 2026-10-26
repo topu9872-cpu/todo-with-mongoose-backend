@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import Task from "./taskSchema";
 import { getTasks } from "./controllers/taskController";
+import { taskDetails } from "./controllers/taskDetailsController";
 
 dotenv.config();
 
@@ -43,43 +44,32 @@ app.use(
     });
   },
 );
+
 const startServer = async (): Promise<void> => {
   await connectDatabase();
 
   app.get("/tasks", getTasks);
   app.get("/my-tasks", getTasks);
 
-  app.get("/tasks/:id", async (req, res) => {
+  app.get("/tasks/:id", taskDetails);
+
+  app.post("/tasks", async (req: Request, res: Response) => {
     try {
-      const { id } = req.params;
-      const result = await Task.findById(id);
-      res.json(result);
+      const result = await Task.create(req.body);
+
+      return res.status(201).json({
+        success: true,
+        result,
+      });
     } catch (error) {
-      console.error(error);
+      console.error("MongoDB error:", error);
+
+      return res.status(500).json({
+        success: false,
+        message: error instanceof Error ? error.message : "Unknown error",
+      });
     }
   });
-
-app.post("/tasks", async (req: Request, res: Response) => {
-  try {
-    console.log("Backend received:", req.body);
-
-    const result = await Task.create(req.body);
-
-    console.log("MongoDB saved:", result);
-
-    return res.status(201).json({
-      success: true,
-      result,
-    });
-  } catch (error) {
-    console.error("MongoDB error:", error);
-
-    return res.status(500).json({
-      success: false,
-      message: error instanceof Error ? error.message : "Unknown error",
-    });
-  }
-});
 
   app.get("/", (_req: Request, res: Response): void => {
     res.status(200).json({
